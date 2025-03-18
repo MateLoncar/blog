@@ -7,7 +7,6 @@ use PDO;
 
 class User {
     private $conn;
-    private $table = "users";
 
     public function __construct() {
         $database = new Database();
@@ -15,8 +14,11 @@ class User {
     }
 
     public function register($username, $password) {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        if ($this->getUserByUsername($username)) {
+            return false; 
+        }
     
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $sql = "INSERT INTO users (username, password) VALUES (:username, :password)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":username", $username);
@@ -24,6 +26,7 @@ class User {
     
         return $stmt->execute();
     }
+    
     
 
     public function login($username, $password) {
@@ -38,4 +41,13 @@ class User {
         }
         return false; 
     }
+
+    public function getUserByUsername($username) {
+        $sql = "SELECT * FROM users WHERE username = :username";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":username", $username);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
 }

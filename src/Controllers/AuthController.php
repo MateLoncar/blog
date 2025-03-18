@@ -18,8 +18,8 @@ class AuthController {
     public function login($username, $password) {
         $user = $this->user->login($username, $password);
         if ($user) {
-            return $user; // Vraćamo korisnika
+            return $user; 
         }
-        return false; // Ako je lozinka netačna
+        return false;
     }
 }
